@@ -5,3 +5,7 @@ pilight version 7.0
 <a href="https://flattr.com/submit/auto?user_id=pilight&url=http%3A%2F%2Fwww.pilight.org" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a>
 
 Visit http://www.pilight.org or http://wiki.pilight.org for more information.
+
+### rev_3_onoff_switch protocol
+this fork introduces the rev_3_onoff_switch protocol which can be used for REV 8341/8342L switches.
+Everything else is exactly the same.
