@@ -16,12 +16,12 @@
 	along with pilight. If not, see	<http://www.gnu.org/licenses/>
 */
 
-#ifndef _PROTOCOL_REV_3_ONOFF_H_
-#define _PROTOCOL_REV_3_ONOFF_H_
+#ifndef _PROTOCOL_REV4_H_
+#define _PROTOCOL_REV4_H_
 
 #include "../protocol.h"
 
-struct protocol_t* rev_3_onoff_switch;
-void rev3OnOffInit(void);
+struct protocol_t* rev4_switch;
+void rev4Init(void);
 
 #endif

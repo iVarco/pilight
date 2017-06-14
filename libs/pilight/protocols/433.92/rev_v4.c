@@ -28,7 +28,7 @@
 #include "../protocol.h"
 #include "../../core/binary.h"
 #include "../../core/gc.h"
-#include "rev_3_onoff_switch.h"
+#include "rev_v4.h"
 
 #define PULSE_MULTIPLIER	3
 #define MIN_PULSE_LENGTH	250 // 253
@@ -38,13 +38,13 @@
 
 static int validate(void) {
 	int i;
-	for (i = 0; i < rev_3_onoff_switch->rawlen; i++) {
-		if (rev_3_onoff_switch->raw[i] == 0) // no value may be zero
+	for (i = 0; i < rev4_switch->rawlen; i++) {
+		if (rev4_switch->raw[i] == 0) // no value may be zero
 			return -1;
 	}
-	if (rev_3_onoff_switch->rawlen == RAW_LENGTH) {
-		if(rev_3_onoff_switch->raw[rev_3_onoff_switch->rawlen-1] >= (MIN_PULSE_LENGTH*PULSE_DIV) &&
-		   rev_3_onoff_switch->raw[rev_3_onoff_switch->rawlen-1] <= (MAX_PULSE_LENGTH*PULSE_DIV)) {
+	if (rev4_switch->rawlen == RAW_LENGTH) {
+		if(rev4_switch->raw[rev4_switch->rawlen-1] >= (MIN_PULSE_LENGTH*PULSE_DIV) &&
+		   rev4_switch->raw[rev4_switch->rawlen-1] <= (MAX_PULSE_LENGTH*PULSE_DIV)) {
 			return 0;
 		}
 	}
@@ -52,58 +52,58 @@ static int validate(void) {
 }
 
 static void createMessage(int sys, int unit, int state) {
-	rev_3_onoff_switch->message = json_mkobject();
-	json_append_member(rev_3_onoff_switch->message, "sys", json_mknumber(sys, 0));
-	json_append_member(rev_3_onoff_switch->message, "unit", json_mknumber(unit, 0));
+	rev4_switch->message = json_mkobject();
+	json_append_member(rev4_switch->message, "sys", json_mknumber(sys, 0));
+	json_append_member(rev4_switch->message, "unit", json_mknumber(unit, 0));
 	if(state == 1) {
-		json_append_member(rev_3_onoff_switch->message, "state", json_mkstring("on"));
+		json_append_member(rev4_switch->message, "state", json_mkstring("on"));
 	} else {
-		json_append_member(rev_3_onoff_switch->message, "state", json_mkstring("off"));
+		json_append_member(rev4_switch->message, "state", json_mkstring("off"));
 	}
 }
 
 // TODO: NOT IMPLEMENTED
 static void parseCode(void) {
-	printf("Parsing for rev_3_onoff_switch is NOT IMPLEMENTED!\n");
+	printf("Parsing for rev4_switch is NOT IMPLEMENTED!\n");
 	//createMessage(system, unit, state);
 }
 
 static void create0(int start) { // always 4 ints
 	//printf("create 0 at %d\n", start);
-	rev_3_onoff_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128 high
-	rev_3_onoff_switch->raw[start+1] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
-	rev_3_onoff_switch->raw[start+2] = (AVG_PULSE_LENGTH);						// 128 high
-	rev_3_onoff_switch->raw[start+3] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
+	rev4_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128 high
+	rev4_switch->raw[start+1] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
+	rev4_switch->raw[start+2] = (AVG_PULSE_LENGTH);						// 128 high
+	rev4_switch->raw[start+3] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
 }
 
 static void create1(int start) { // always 4 ints
 	//printf("create 1 at %d\n", start);
-	rev_3_onoff_switch->raw[start]   = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
-	rev_3_onoff_switch->raw[start+1] = (AVG_PULSE_LENGTH);						// 128 low
-	rev_3_onoff_switch->raw[start+2] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
-	rev_3_onoff_switch->raw[start+3] = (AVG_PULSE_LENGTH);						// 128 low
+	rev4_switch->raw[start]   = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
+	rev4_switch->raw[start+1] = (AVG_PULSE_LENGTH);						// 128 low
+	rev4_switch->raw[start+2] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
+	rev4_switch->raw[start+3] = (AVG_PULSE_LENGTH);						// 128 low
 }
 
 static void createFloating(int start) { // always 4 ints
 	//printf("create F at %d\n", start);
-	rev_3_onoff_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128 high
-	rev_3_onoff_switch->raw[start+1] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
-	rev_3_onoff_switch->raw[start+2] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
-	rev_3_onoff_switch->raw[start+3] = (AVG_PULSE_LENGTH);						// 128 low
+	rev4_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128 high
+	rev4_switch->raw[start+1] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 low
+	rev4_switch->raw[start+2] = (PULSE_MULTIPLIER*AVG_PULSE_LENGTH);		// 384 high
+	rev4_switch->raw[start+3] = (AVG_PULSE_LENGTH);						// 128 low
 }
 
 static void createSync(int start) { // always 2 ints
 	//printf("create sync at %d\n", start);
-	rev_3_onoff_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128  high
-	rev_3_onoff_switch->raw[start+1] = (34*AVG_PULSE_LENGTH);					// 3968 low
+	rev4_switch->raw[start]   = (AVG_PULSE_LENGTH);						// 128  high
+	rev4_switch->raw[start+1] = (34*AVG_PULSE_LENGTH);					// 3968 low
 }
 
 
 static void clearCode(void) {
 	// initialize with zeros
 	int i;
-	for (i = 0; i < rev_3_onoff_switch->rawlen; i++) {
-		rev_3_onoff_switch->raw[i] = 0;
+	for (i = 0; i < rev4_switch->rawlen; i++) {
+		rev4_switch->raw[i] = 0;
 	}
 }
 
@@ -167,13 +167,13 @@ static int createCode(struct JsonNode *code) {
 		state = 1;
 
 	if(sys == -1 || unit == -1 || state == -1) {
-		logprintf(LOG_ERR, "rev_3_onoff_switch: insufficient number of arguments");
+		logprintf(LOG_ERR, "rev4_switch: insufficient number of arguments");
 		return EXIT_FAILURE;
 	} else if(sys < 1 || sys > 4) {
-		logprintf(LOG_ERR, "rev_3_onoff_switch: invalid system id range");
+		logprintf(LOG_ERR, "rev4_switch: invalid system id range");
 		return EXIT_FAILURE;
 	} else if(unit < 0 || unit > 3) {
-		logprintf(LOG_ERR, "rev_3_onoff_switch: invalid unit id range");
+		logprintf(LOG_ERR, "rev4_switch: invalid unit id range");
 		return EXIT_FAILURE;
 	} else {
 		createMessage(sys, unit, state);
@@ -182,9 +182,9 @@ static int createCode(struct JsonNode *code) {
 		createUnit(unit); // must generate 4 bytes (A4-A7)
 		createState(state); // must generate 4 bytes (D3-D0)
 		createFooter(); // just creates sync
-		rev_3_onoff_switch->rawlen = RAW_LENGTH;
+		rev4_switch->rawlen = RAW_LENGTH;
 		//int i; for (i=0; i<RAW_LENGTH; i++) {
-		//	printf("%3d ", rev_3_onoff_switch->raw[i]); if (i%4==3) printf ("\n");
+		//	printf("%3d ", rev4_switch->raw[i]); if (i%4==3) printf ("\n");
 		//} printf ("\n");
 	}
 	return EXIT_SUCCESS;
@@ -202,42 +202,42 @@ static void printHelp(void) {
 __attribute__((weak))
 #endif
 // TODO
-void rev3OnOffInit(void) {
+void rev4Init(void) {
 
-	protocol_register(&rev_3_onoff_switch);
-	protocol_set_id(rev_3_onoff_switch, "rev_3_onoff_switch");
-	protocol_device_add(rev_3_onoff_switch, "rev_3_onoff_switch", "Rev 3 OnOff Switches");
-	rev_3_onoff_switch->devtype = SWITCH;
-	rev_3_onoff_switch->hwtype = RF433;
-	rev_3_onoff_switch->minrawlen = RAW_LENGTH;
-	rev_3_onoff_switch->maxrawlen = RAW_LENGTH;
-	rev_3_onoff_switch->maxgaplen = MAX_PULSE_LENGTH*PULSE_DIV;
-	rev_3_onoff_switch->mingaplen = MIN_PULSE_LENGTH*PULSE_DIV;
+	protocol_register(&rev4_switch);
+	protocol_set_id(rev4_switch, "rev4_switch");
+	protocol_device_add(rev4_switch, "rev4_switch", "Rev 4 Switches");
+	rev4_switch->devtype = SWITCH;
+	rev4_switch->hwtype = RF433;
+	rev4_switch->minrawlen = RAW_LENGTH;
+	rev4_switch->maxrawlen = RAW_LENGTH;
+	rev4_switch->maxgaplen = MAX_PULSE_LENGTH*PULSE_DIV;
+	rev4_switch->mingaplen = MIN_PULSE_LENGTH*PULSE_DIV;
 
-	options_add(&rev_3_onoff_switch->options, 's', "sys", OPTION_HAS_VALUE, DEVICES_ID, JSON_NUMBER, NULL, "^([1-4]{1})$");
-	options_add(&rev_3_onoff_switch->options, 'u', "unit", OPTION_HAS_VALUE, DEVICES_ID, JSON_NUMBER, NULL, "^([1-4]{1})$");
-	options_add(&rev_3_onoff_switch->options, 't', "on", OPTION_NO_VALUE, DEVICES_STATE, JSON_STRING, NULL, NULL);
-	options_add(&rev_3_onoff_switch->options, 'f', "off", OPTION_NO_VALUE, DEVICES_STATE, JSON_STRING, NULL, NULL);
+	options_add(&rev4_switch->options, 's', "sys", OPTION_HAS_VALUE, DEVICES_ID, JSON_NUMBER, NULL, "^([1-4]{1})$");
+	options_add(&rev4_switch->options, 'u', "unit", OPTION_HAS_VALUE, DEVICES_ID, JSON_NUMBER, NULL, "^([1-4]{1})$");
+	options_add(&rev4_switch->options, 't', "on", OPTION_NO_VALUE, DEVICES_STATE, JSON_STRING, NULL, NULL);
+	options_add(&rev4_switch->options, 'f', "off", OPTION_NO_VALUE, DEVICES_STATE, JSON_STRING, NULL, NULL);
 
-	options_add(&rev_3_onoff_switch->options, 0, "readonly", OPTION_HAS_VALUE, GUI_SETTING, JSON_NUMBER, (void *)0, "^[10]{1}$");
-	options_add(&rev_3_onoff_switch->options, 0, "confirm", OPTION_HAS_VALUE, GUI_SETTING, JSON_NUMBER, (void *)0, "^[10]{1}$");
+	options_add(&rev4_switch->options, 0, "readonly", OPTION_HAS_VALUE, GUI_SETTING, JSON_NUMBER, (void *)0, "^[10]{1}$");
+	options_add(&rev4_switch->options, 0, "confirm", OPTION_HAS_VALUE, GUI_SETTING, JSON_NUMBER, (void *)0, "^[10]{1}$");
 
-	rev_3_onoff_switch->parseCode = &parseCode;
-	rev_3_onoff_switch->createCode = &createCode;
-	rev_3_onoff_switch->printHelp = &printHelp;
-	rev_3_onoff_switch->validate = &validate;
+	rev4_switch->parseCode = &parseCode;
+	rev4_switch->createCode = &createCode;
+	rev4_switch->printHelp = &printHelp;
+	rev4_switch->validate = &validate;
 }
 
 #if defined(MODULE) && !defined(_WIN32)
 // TODO
 void compatibility(struct module_t *module) {
-	module->name = "rev_3_onoff_switch";
+	module->name = "rev4_switch";
 	module->version = "0.13";
 	module->reqversion = "6.0";
 	module->reqcommit = "84";
 }
 
 void init(void) {
-	rev3OnOffInit();
+	rev4Init();
 }
 #endif
